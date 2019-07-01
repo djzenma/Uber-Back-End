@@ -3,9 +3,8 @@ const mysql = require('mysql');
 const connection = mysql.createConnection({
     host: 'localhost',
     user: 'root',
-    password: '',
-    database: 'Toktok-Db',
-    socketPath: '/Applications/MAMP/tmp/mysql/mysql.sock'
+    password: 'mysql',
+    database: 'Toktok-Db'
 });
 
 connection.connect((error) => {

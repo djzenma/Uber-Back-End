@@ -3,9 +3,27 @@ var router = express.Router();
 const mysql = require('./../mysqlConnect');
 
 /*
-*   AUTH
+*   RIDER
+*   Receive riderEmail
+*   Send driverName and fare
 */
-router.get('/', function(req, res, next) {
+router.get('/:riderEmail', function(req, res, next) {
+    const email = req.params.riderEmail;
+    // Get the driver name
+    mysql.query( `SELECT driverEmail FROM ride WHERE riderEmail="${email}"`, (error, result) => {
+        if (error) {
+            console.log(error);
+            res.status(404).end();  // TODO:: Change status code
+        }
+        else if(result.length !== 0){
+            console.log(result[0]);
+            mysql.query(`SELECT name FROM Driver WHERE email=${result[0].email}`, (err, nameResult)=> {
+                res.status(200).json(nameResult[0]);
+            });
+        }
+        else
+            res.status(404).end();  // TODO:: Change status code
+    });
 });
 
 module.exports = router;

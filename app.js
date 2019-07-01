@@ -28,12 +28,12 @@ app.use(express.static(path.join(__dirname, 'public')));
 app.use('/', require('./routes/index'));
 app.use('/auth', require('./routes/auth'));
 app.use('/rider', require('./routes/rider'));
-/*
+app.use('/ride', require('./routes/ride'));
 app.use('/driver', require('./routes/driver'));
+/*
 app.use('/admin', require('./routes/admin'));
 app.use('/fare', require('./routes/fare'));
 app.use('/ridesHistory', require('./routes/ridesHistory'));
-app.use('/ride', require('./routes/ride'));
 app.use('/reset', require('./routes/reset'));
 app.use('/credits', require('./routes/credits'));
 app.use('/promoCode', require('./routes/promoCode'));
