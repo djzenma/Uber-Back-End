@@ -16,10 +16,11 @@ router.get('/:riderEmail', function(req, res, next) {
             res.status(404).end();  // TODO:: Change status code
         }
         else if(result.length !== 0){
-            console.log(result[0]);
-            mysql.query(`SELECT name FROM Driver WHERE email=${result[0].email}`, (err, nameResult)=> {
-                res.status(200).json(nameResult[0]);
-            });
+            if(result[0].driverEmail !== null) {
+                mysql.query(`SELECT name FROM Driver WHERE email=${result[0].email}`, (err, nameResult) => {
+                    res.status(200).json(nameResult[0].name);
+                });
+            }
         }
         else
             res.status(404).end();  // TODO:: Change status code
