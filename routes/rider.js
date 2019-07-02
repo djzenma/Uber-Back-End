@@ -10,7 +10,7 @@ const mysql = require('./../mysqlConnect');
 router.get('/:riderEmail', function(req, res, next) {
     const email = req.params.riderEmail;
     // Get the driver name
-    mysql.query( `SELECT driverEmail FROM ride WHERE riderEmail="${email}"`, (error, result) => {
+    mysql.query( `SELECT driverEmail FROM ride WHERE riderEmail="${email}" AND state="pending"`, (error, result) => {
         if (error) {
             console.log(error);
             res.status(404).end();
@@ -23,7 +23,7 @@ router.get('/:riderEmail', function(req, res, next) {
             }
         }
         else
-            res.status(404).end();
+            res.status(404).json({noRides: true});
     });
 });
 
