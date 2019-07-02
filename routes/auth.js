@@ -15,12 +15,14 @@ router.post('/', function(req, res, next) {
       console.log(error);
       res.status(404).end("The query is wrong!");
     }
-    else {
+    else if(result.length !== 0) {
       if(result[0].passcode === pass)
         res.status(200).json(result[0]);
       else
         res.status(401).end("Unauthorized!");
     }
+    else
+      res.status(401).end("You must sign up first!");
   });
 });
 

@@ -13,7 +13,7 @@ router.get('/:riderEmail', function(req, res, next) {
     mysql.query( `SELECT driverEmail FROM ride WHERE riderEmail="${email}"`, (error, result) => {
         if (error) {
             console.log(error);
-            res.status(404).end();  // TODO:: Change status code
+            res.status(404).end();
         }
         else if(result.length !== 0){
             if(result[0].driverEmail !== null) {
@@ -23,7 +23,7 @@ router.get('/:riderEmail', function(req, res, next) {
             }
         }
         else
-            res.status(404).end();  // TODO:: Change status code
+            res.status(404).end();
     });
 });
 

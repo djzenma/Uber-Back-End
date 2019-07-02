@@ -51,4 +51,31 @@ router.post('/', function(req, res, next) {
 });
 
 
+
+/*
+*   Driver req that he ended the ride
+*/
+router.post('/ended', function(req, res, next) {
+    const driverEmail = req.body.driverEmail;
+
+    // Update the ride state to ENDED
+    mysql.query(`SELECT * FROM ride WHERE state="running" AND driveremail='${driverEmail}';`, (error, result) => {
+        if (error) {
+            console.log(error);
+            res.status(404).end("Ride Not Found!");
+        }
+        else if (result.length !== 0) {
+            mysql.query(`UPDATE  ride SET state = "ended" WHERE rideid=${result[0].rideid};`, (err, updateResult) => {
+                if (err)
+                    console.log(err);
+                else
+                    res.status(200).end("Ride Ended Successfully");
+            });
+        }
+        else
+            res.status(404).end("No Rides To End!");
+    });
+});
+
+
 module.exports = router;
