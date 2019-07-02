@@ -17,8 +17,13 @@ router.get('/:riderEmail', function(req, res, next) {
         }
         else if(result.length !== 0){
             if(result[0].driverEmail !== null) {
-                mysql.query(`SELECT name FROM Driver WHERE email=${result[0].email}`, (err, nameResult) => {
-                    res.status(200).json(nameResult[0].name);
+                mysql.query(`SELECT name FROM Driver WHERE email='${result[0].driverEmail}'`, (err, nameResult) => {
+                    if (err)
+                        console.log (err);
+                    else
+                    if (nameResult.length !== 0  )
+                        res.status(200).json(nameResult[0].name);
+
                 });
             }
         }
