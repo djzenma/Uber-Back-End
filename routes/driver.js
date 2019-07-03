@@ -71,7 +71,29 @@ router.post('/ended', function(req, res, next) {
                 else
                     res.status(200).end("Ride Ended Successfully");
             });
-        }
+            mysql.query(`SELECT * FROM fare WHERE fstart = '${result[0].fare_s}' AND fend ='${result[0].fare_e}';`, (e, fareRes) => {
+                if (e)
+                    console.log (e);
+                else
+                {
+                    mysql.query(`UPDATE  rider SET balance = balance - ${fareRes[0].price} WHERE email="${result[0].rideremail}";`, (er, deducedRes) => {
+                        if (er)
+                            console.log(er);
+                        else
+                            res.status(200).end("Rider Balance Updated Successfully ");
+
+                    });
+
+                    mysql.query(`UPDATE  driver SET credit = credit + ${fareRes[0].price} WHERE email="${result[0].driveremail}";`, (errr, addedRes) => {
+                        if (errr)
+                            console.log(errr);
+                        else
+                            res.status(200).end("Driver Balance Updated Successfully ");
+
+                    });
+                }
+            });
+            }
         else
             res.status(404).end("No Rides To End!");
     });
