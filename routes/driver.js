@@ -37,7 +37,8 @@ router.post('/', function(req, res, next) {
                                 {
                                     name: updateResult[0].name,
                                     endLoc: result[0].fare_e,
-                                    fare: fareRes[0].price
+                                    fare: fareRes[0].price,
+                                    rideid : result[0].rideid
                                 };
                             res.status(200).json(resBody);
                         }
@@ -99,5 +100,27 @@ router.post('/ended', function(req, res, next) {
     });
 });
 
+router.post('/arrived/', function(req, res, next)
+{
+    const email = req.query.driveremail;
+    const id = req.query.rideid;
+
+    mysql.query(`SELECT state FROM ride WHERE  rideid='${rideid}';`, (error, result) => {
+        if (error)
+            console.log (error);
+        else
+        {
+            if (result.length !== 0 )
+            {
+                if (result[0].state === "running")
+                    res.status(200).end("Ride Still Running");
+                else
+                    if (result[0].state === "cancelled")
+                        res.status(404).end("Ride Cancelled");
+
+            }
+        }
+    });
+ });
 
 module.exports = router;
