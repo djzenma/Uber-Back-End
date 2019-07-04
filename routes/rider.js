@@ -91,4 +91,24 @@ router.get('/cancel/plz', function(req, res, next) {
     });
 });
 
+
+
+/*
+    Rider requests to update his password
+ */
+router.put('/modify/', (req,res,next) => {
+    const email = req.body.email;
+    const newPass = req.body.password;
+
+    mysql.query(`UPDATE rider SET passcode='${newPass}' WHERE email='${email}';`, (error, result)=>{
+        if(error) {
+            console.log(error);
+            res.status(500).end();
+        }
+        else {
+            res.status(200).end("Rider's password Updated Successfully");
+        }
+    });
+});
+
 module.exports = router;
