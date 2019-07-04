@@ -123,4 +123,42 @@ router.post('/arrived/', function(req, res, next)
     });
  });
 
+
+/*
+    Admin requests to add a new driver
+ */
+router.post('/add/', (req,res,next) => {
+    const email = req.body.email;
+    const pass = req.body.password;
+
+    mysql.query(`INSERT INTO driver(email, passcode) VALUES('${email}','${pass}');`, (error, result)=>{
+        if(error) {
+            console.log(error);
+            res.status(500).end();
+        }
+        else {
+            res.status(200).end("Driver added Successfully!");
+        }
+    });
+});
+
+
+/*
+    Admin requests to remove a driver
+ */
+router.delete('/remove/', (req,res,next) => {
+    const email = req.body.email;
+
+    mysql.query(`DELETE FROM driver WHERE email='${email}';`, (error, result)=>{
+        if(error) {
+            console.log(error);
+            res.status(500).end();
+        }
+        else {
+            res.status(200).end("Driver deleted Successfully");
+        }
+    });
+});
+
+
 module.exports = router;

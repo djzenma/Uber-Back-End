@@ -3,7 +3,9 @@ var router = express.Router();
 const mysql = require('./../mysqlConnect');
 
 
-
+/*
+    Admin requests to add a new promo code
+ */
 router.post('/add/', (req,res,next) => {
     const code = req.body.code;
     const amount = req.body.amount;
@@ -19,6 +21,9 @@ router.post('/add/', (req,res,next) => {
     });
 });
 
+/*
+    Admin requests to remove a promo code
+ */
 router.delete('/remove/', (req,res,next) => {
     const code = req.body.code;
 
@@ -33,6 +38,9 @@ router.delete('/remove/', (req,res,next) => {
     });
 });
 
+/*
+    Admin requests to update the value of a promo code
+ */
 router.put('/modify/', (req,res,next) => {
     const code = req.body.code;
     const newAmount = req.body.amount;
