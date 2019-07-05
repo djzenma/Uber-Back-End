@@ -38,5 +38,18 @@ router.post('/', function(req, res, next) {
 });
 
 
+router.post('/nodriver', function(req, res, next) {
+
+    const sLoc = req.body.startLoc;
+    const eLoc = req.body.endLoc;
+    const riderProfile = req.body.profile;
+
+    mysql.query( `DELETE FROM ride WHERE state ="pending" AND fare_s= "${sLoc}" AND fare_e = "${eLoc}" AND rideremail ="${riderProfile.email}";`, (ee, rr) => {
+    if (ee)
+        console.log (ee);
+    else
+        res.status(200).end("Ride Removed Successfully");
+    });
+});
 
 module.exports = router;
