@@ -36,7 +36,7 @@ router.post('/', function(req, res, next) {
                             mysql.query(`SELECT value FROM discountcode WHERE dcode = "${result[0].dcode}"`, (e, r) => {
                                 if (e)
                                     console.log(e);
-                                else if (r.length !== 0 )
+                                else if (r.length !== 0  )
                                    {  const resBody =
                                        {
                                            name: updateResult[0].name,
@@ -46,6 +46,17 @@ router.post('/', function(req, res, next) {
                                        };
                                        res.status(200).json(resBody);
                                    }
+                                else
+                                {
+                                    const resBody =
+                                        {
+                                            name: updateResult[0].name,
+                                            endLoc: result[0].fare_e,
+                                            fare: fareRes[0].price ,
+                                            rideid : result[0].rideid
+                                        };
+                                    res.status(200).json(resBody);
+                                }
                             });
 
                         }
@@ -217,6 +228,22 @@ router.put('/modify/', (req,res,next) => {
     });
 });
 
+router.post('/availability', function(req, res, next)
+{
+    const email = req.body.driverEmail;
+    const availability = req.body.availability;
+
+    mysql.query(`UPDATE driver SET availability='${availability}' WHERE email='${email}';`, (error, result) => {
+        if (error) {
+            console.log(error);
+        }
+        else
+        {
+            console.log ("Availability = " + availability);
+            res.status(200).end("Driver is Available Now ");
+        }
+    });
+});
 
 
 module.exports = router;

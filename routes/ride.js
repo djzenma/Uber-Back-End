@@ -29,12 +29,14 @@ router.post('/', function(req, res, next) {
                     console.log(error);
                     res.status(404).end();  // TODO:: Change status code
                 } else {
-                    mysql.query(`SELECT value FROM discountcode WHERE dcode = "${promo}"`, (e, r) => {
+                    mysql.query(`SELECT value FROM discountcode WHERE dcode = ${promo}`, (e, r) => {
                         if (e)
                             console.log(e);
                         else
                             if (r.length !== 0 )
                         res.status(200).json({fare: result[0].price - r[0].value });
+                            else
+                                res.status(200).json({fare: result[0].price  });
                     });
                 }
             });
