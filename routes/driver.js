@@ -100,16 +100,18 @@ router.post('/ended', function(req, res, next) {
     });
 });
 
-router.post('/arrived/', function(req, res, next)
+router.post('/arrived', function(req, res, next)
 {
-    const email = req.query.driveremail;
-    const id = req.query.rideid;
+    const email = req.body.driveremail;
+    const id = req.body.rideid;
 
-    mysql.query(`SELECT state FROM ride WHERE  rideid='${rideid}';`, (error, result) => {
-        if (error)
-            console.log (error);
+    mysql.query(`SELECT state FROM ride WHERE  rideid='${id}';`, (error, result) => {
+        if (error) {
+            console.log(error);
+        }
         else
         {
+            console.log ()
             if (result.length !== 0 )
             {
                 if (result[0].state === "running")
