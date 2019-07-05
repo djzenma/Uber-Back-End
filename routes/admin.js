@@ -27,16 +27,32 @@ router.post('/add/', (req,res,next) => {
  */
 router.delete('/remove/', (req,res,next) => {
     const email = req.body.email;
+    const changer = req.body.changer;
 
-    mysql.query(`DELETE FROM admin WHERE email='${email}';`, (error, result)=>{
-        if(error) {
-            console.log(error);
-            res.status(500).end();
-        }
+    mysql.query('SET FOREIGN_KEY_CHECKS=0;', (err, resu)=>{
+        if(err)
+            console.log(err);
         else {
-            res.status(200).end("Admin deleted Successfully");
+            mysql.query(`DELETE FROM admin WHERE email='${email}';`, (error, result) => {
+                if (error) {
+                    console.log(error);
+                    res.status(500).end();
+                } else {
+                    res.status(200).end("Admin deleted Successfully");
+
+                    // Keep a record
+                    mysql.query(`INSERT INTO chnged(changeremail, changedemail, pass_delete) VALUES('${changer}','${email}', 1);`, (e, r) => {
+                        if (e)
+                            console.log(e);
+                        else{
+                            mysql.query('SET FOREIGN_KEY_CHECKS=1;',()=>{});
+                        }
+                    });
+                }
+            });
         }
     });
+
 });
 
 
@@ -46,6 +62,7 @@ router.delete('/remove/', (req,res,next) => {
 router.put('/modify/', (req,res,next) => {
     const email = req.body.email;
     const newAmount = req.body.password;
+    const changer = req.body.changeremail;
 
     mysql.query(`UPDATE admin SET passcode='${newAmount}' WHERE email='${email}';`, (error, result)=>{
         if(error) {
@@ -54,6 +71,11 @@ router.put('/modify/', (req,res,next) => {
         }
         else {
             res.status(200).end("Admin's password Updated Successfully");
+            // Keep a record
+            mysql.query(`INSERT INTO chnged(changeremail, changedemail, pass_delete) VALUES('${changer}','${email}', 0);`, (e, r)=>{
+                if(e)
+                    console.log(e);
+            });
         }
     });
 });

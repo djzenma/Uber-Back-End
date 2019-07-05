@@ -144,6 +144,7 @@ router.post('/arrived', function(req, res, next)
  */
 router.post('/add/', (req,res,next) => {
     const email = req.body.email;
+    const admin = req.body.admin;
     const pass = req.body.password;
 
     mysql.query(`INSERT INTO driver(email, passcode) VALUES('${email}','${pass}');`, (error, result)=>{
@@ -153,6 +154,12 @@ router.post('/add/', (req,res,next) => {
         }
         else {
             res.status(200).end("Driver added Successfully!");
+
+            // Keep a record
+            mysql.query(`INSERT INTO modified(adminemail, driveremail, add_delete) VALUES('${admin}','${email}', 0);`, (e, r) => {
+                if (e)
+                    console.log(e);
+            });
         }
     });
 });
@@ -163,14 +170,29 @@ router.post('/add/', (req,res,next) => {
  */
 router.delete('/remove/', (req,res,next) => {
     const email = req.body.email;
+    const admin = req.body.admin;
 
-    mysql.query(`DELETE FROM driver WHERE email='${email}';`, (error, result)=>{
-        if(error) {
-            console.log(error);
-            res.status(500).end();
-        }
+    mysql.query('SET FOREIGN_KEY_CHECKS=0;',(er, re)=>{
+        if(er)
+            console.log(er);
         else {
-            res.status(200).end("Driver deleted Successfully");
+            mysql.query(`DELETE FROM driver WHERE email='${email}';`, (error, result) => {
+                if (error) {
+                    console.log(error);
+                    res.status(500).end();
+                }
+                else {
+                    res.status(200).end("Driver deleted Successfully");
+
+                    mysql.query(`INSERT INTO modified(adminemail, driveremail, add_delete) VALUES('${admin}','${email}', 1);`, (e, r) => {
+                        if (e)
+                            console.log(e);
+                        else {
+                            mysql.query('SET FOREIGN_KEY_CHECKS=1;', () => {});
+                        }
+                    });
+                }
+            });
         }
     });
 });

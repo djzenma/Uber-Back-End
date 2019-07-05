@@ -14,10 +14,10 @@ router.post('/', function(req, res, next) {
     const riderProfile = req.body.profile;
     const date = new Date().getFullYear() + '-' + new Date().getMonth() + '-' + new Date().getDay();
     const rideId = Math.trunc((parseInt(Date.now() + '' + Math.random()))/ 10000);
-    const promo = req.body.promocode ;
+    const promo = (req.body.promocode === "")? "NULL" : `"${req.body.promocode}"`;
 
     // Insert the ride
-    mysql.query( `INSERT INTO ride(rideid, state, ridedate, driveremail, fare_s, fare_e, rideremail, dcode) VALUES(${rideId}, "pending", "${date}", NULL, "${sLoc}", "${eLoc}", "${riderProfile.email}" , "${promo}");`, (error, ress) => {
+    mysql.query( `INSERT INTO ride(rideid, state, ridedate, driveremail, fare_s, fare_e, rideremail, dcode) VALUES(${rideId}, "pending", "${date}", NULL, "${sLoc}", "${eLoc}", "${riderProfile.email}" , ${promo});`, (error, ress) => {
         if (error) {
             console.log(error);
             res.status(404).end();  // TODO:: Change status code
