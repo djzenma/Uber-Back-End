@@ -16,7 +16,7 @@ router.get('/:riderEmail', function(req, res, next) {
             console.log(error);
             res.status(404).end();  // TODO:: Change status code
         }
-        else if(result.length !== 0){
+        else if(result.length !== 0){ //if found running ride
             if(result[0].driverEmail !== null) {
                 mysql.query(`SELECT name FROM Driver WHERE email='${result[0].driverEmail}'`, (err, nameResult) => {
                     if (err)
@@ -28,8 +28,17 @@ router.get('/:riderEmail', function(req, res, next) {
                 });
             }
         }
-        else
-            res.status(404).json({noRide: true});
+        else {
+            mysql.query( `SELECT driverEmail FROM ride WHERE riderEmail="${email}" AND state="ended"`, (ee, rr) => {
+                if (ee)
+                    console.log (ee);
+                else
+                    if (rr.length !== 0  )
+                        res.status(404).json({noRide: false}); //found ended ride
+                    else
+                        res.status(404).json({noRide: true}); //if did not find ride
+            });
+        }
     });
 });
 
