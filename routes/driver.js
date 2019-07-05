@@ -16,7 +16,7 @@ router.post('/', function(req, res, next) {
             res.status(404).end("Ride Not Found!");
         }
         else if (result.length !== 0) {
-            mysql.query(`UPDATE  ride SET state = "running", driveremail ="${email}" WHERE rideid=${result[0].rideid};`, (err, updateResult) => {
+            mysql.query(`UPDATE  ride SET state = "running", driveremail ="${email}" WHERE rideid=${result[0].rideid};`, (err, rideResult) => {
                 if (err)
                     console.log(err);
             });
@@ -32,15 +32,22 @@ router.post('/', function(req, res, next) {
                             console.log(e);
                             res.status(404).end("Fare Not Found!");
                         }
-                        else {
-                            const resBody =
-                                {
-                                    name: updateResult[0].name,
-                                    endLoc: result[0].fare_e,
-                                    fare: fareRes[0].price,
-                                    rideid : result[0].rideid
-                                };
-                            res.status(200).json(resBody);
+                        else if(fareRes.length !== 0) {
+                            mysql.query(`SELECT value FROM discountcode WHERE dcode = "${result[0].dcode}"`, (e, r) => {
+                                if (e)
+                                    console.log(e);
+                                else if (r.length !== 0 )
+                                   {  const resBody =
+                                       {
+                                           name: updateResult[0].name,
+                                           endLoc: result[0].fare_e,
+                                           fare: fareRes[0].price - r[0].value,
+                                           rideid : result[0].rideid
+                                       };
+                                       res.status(200).json(resBody);
+                                   }
+                            });
+
                         }
                     });
                 }
@@ -77,20 +84,26 @@ router.post('/ended', function(req, res, next) {
                     console.log (e);
                 else
                 {
-                    mysql.query(`UPDATE  rider SET balance = balance - ${fareRes[0].price} WHERE email="${result[0].rideremail}";`, (er, deducedRes) => {
-                        if (er)
-                            console.log(er);
-                        else
-                            res.status(200).end("Rider Balance Updated Successfully ");
+                    mysql.query(`SELECT value FROM discountcode WHERE dcode = "${result[0].dcode}"`, (derr, r) => {
+                        if(derr)
+                            console.log(derr);
+                        else if(r.length !== 0) {
+                            mysql.query(`UPDATE  rider SET balance = balance - ${fareRes[0].price - r[0].value} WHERE email="${result[0].rideremail}";`, (er, deducedRes) => {
+                                if (er)
+                                    console.log(er);
+                                else
+                                    res.status(200).end("Rider Balance Updated Successfully ");
 
-                    });
+                            });
 
-                    mysql.query(`UPDATE  driver SET credit = credit + ${fareRes[0].price} WHERE email="${result[0].driveremail}";`, (errr, addedRes) => {
-                        if (errr)
-                            console.log(errr);
-                        else
-                            res.status(200).end("Driver Balance Updated Successfully ");
+                            mysql.query(`UPDATE  driver SET credit = credit + ${fareRes[0].price - r[0].value} WHERE email="${result[0].driveremail}";`, (errr, addedRes) => {
+                                if (errr)
+                                    console.log(errr);
+                                else
+                                    res.status(200).end("Driver Balance Updated Successfully ");
 
+                            });
+                        }
                     });
                 }
             });
