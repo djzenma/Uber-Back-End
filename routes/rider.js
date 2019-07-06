@@ -108,8 +108,10 @@ router.get('/cancel/plz', function(req, res, next) {
 router.put('/modify/', (req,res,next) => {
     const email = req.body.email;
     const newPass = req.body.password;
+    const birth = req.body.birth;
+    const name = req.body.name;
 
-    mysql.query(`UPDATE rider SET passcode='${newPass}' WHERE email='${email}';`, (error, result)=>{
+    mysql.query(`UPDATE rider SET passcode='${newPass}', name='${name}', bdate='${birth}' WHERE email='${email}';`, (error, result)=>{
         if(error) {
             console.log(error);
             res.status(500).end();
