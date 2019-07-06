@@ -1,6 +1,13 @@
 var express = require('express');
 var router = express.Router();
 const mysql = require('./../mysqlConnect');
+const Nexmo = require('nexmo');
+
+const nexmo = new Nexmo({
+    apiKey: '3c951e58',
+    apiSecret: 'gUhypQZe1SUb8d0Z',
+});
+
 
 /*
 *   Driver req when he is available
@@ -129,17 +136,24 @@ router.post('/arrived', function(req, res, next)
     const email = req.body.driveremail;
     const id = req.body.rideid;
 
-    mysql.query(`SELECT state FROM ride WHERE  rideid='${id}';`, (error, result) => {
+    mysql.query(`SELECT * FROM ride WHERE  rideid='${id}';`, (error, result) => {
         if (error) {
             console.log(error);
         }
         else
         {
-            console.log ()
             if (result.length !== 0 )
             {
-                if (result[0].state === "running")
+                if (result[0].state === "running") {
+
+                    const from = 'Nexmo';
+                    const to = '201025673351';
+                    const text = `${result[0].driveremail} Arrived! Go meet him. Best, Mazen and Bassant`;
+
+                    nexmo.message.sendSms(from, to, text);
+
                     res.status(200).end("Ride Still Running");
+                }
                 else
                     if (result[0].state === "cancelled")
                         res.status(404).end("Ride Cancelled");

@@ -33,10 +33,10 @@ app.use('/driver', require('./routes/driver'));
 app.use('/promoCode', require('./routes/promoCode'));
 app.use('/credits', require('./routes/credits'));
 app.use('/admin', require('./routes/admin'));
+app.use('/reset', require('./routes/reset'));
 /*
 app.use('/fare', require('./routes/fare'));
 app.use('/ridesHistory', require('./routes/ridesHistory'));
-app.use('/reset', require('./routes/reset'));
 */
 
 // catch 404 and forward to error handler
